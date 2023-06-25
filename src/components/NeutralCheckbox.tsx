@@ -9,7 +9,7 @@ const trilean = {
   neutral: RiQuestionMark,
 } as const;
 
-type Trilean = keyof typeof trilean;
+export type Trilean = keyof typeof trilean;
 
 type NeutralCheckboxProps = Omit<InputProps, "onChange" | "defaultValue" | "type" | "value"> & {
   ref?: RefObject<HTMLInputElement> | undefined;

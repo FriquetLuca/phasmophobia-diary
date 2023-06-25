@@ -2,12 +2,13 @@ import { Checkbox, Table, Thead, Tbody, Tr, Th, Td, type TableProps, type TableR
 import { useRouter } from 'next/router';
 import { type ReactNode, useEffect, useState } from "react";
 
-type RowData = string | number | ReactNode | undefined;
-type TableRecord = Record<string | number | symbol, RowData>;
+type TableRecord = Record<string | number | symbol, ReactNode>;
 
 type GeneticTableHeader<T> = {
   name: keyof T;
-  label?: RowData;
+  label?: ReactNode;
+  labelStyle?: TableColumnHeaderProps;
+  contentStyle?: TableCellProps;
   hidden?: boolean;
   ignoreLink?: boolean;
 };
@@ -38,7 +39,7 @@ type TableGeneratorProps<T extends TableRecord> = {
   headers: GeneticTableHeader<T>[];
   datas: T[];
   onSelectChange?: (selected: boolean[], datas?: T[]) => void;
-  emptyDisplay?: RowData;
+  emptyDisplay?: ReactNode;
   style?: TableGeneratorStyle;
   variants?: TableGeneratorVariants;
 };
@@ -87,7 +88,7 @@ export default function TableGenerator<T extends TableRecord>({ datas, emptyDisp
             if (header.hidden) {
               return <></>;
             }
-            return <Th key={index} {...style?.th} variant={variants?.th}>{header.label}</Th>;
+            return <Th key={index} {...style?.th} {...header?.labelStyle} variant={variants?.th}>{header.label}</Th>;
           })}
         </Tr>
       </Thead>
@@ -116,13 +117,18 @@ export default function TableGenerator<T extends TableRecord>({ datas, emptyDisp
               }
               const currentData = data[header.name];
               return (
-                <Td 
-                onClick={
-                  (!header?.ignoreLink && linkedRows)
-                  ? async () => await router.push(linkedRows(data))
-                  : undefined
-                }
-                cursor={!header?.ignoreLink && linkedRows ? "pointer" : "initial"} key={headerIndex} { ...style?.td } variant={variants?.td}>
+                <Td
+                  onClick={
+                    (!header?.ignoreLink && linkedRows)
+                    ? async () => await router.push(linkedRows(data))
+                    : undefined
+                  }
+                  cursor={!header?.ignoreLink && linkedRows ? "pointer" : "initial"}
+                  key={headerIndex}
+                  { ...style?.td }
+                  { ...header?.contentStyle }
+                  variant={variants?.td}
+                >
                   {
                     typeof currentData === "boolean"
                     ? <Checkbox cursor="initial" disabled isReadOnly isChecked={currentData} checked={currentData} />
