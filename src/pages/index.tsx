@@ -156,7 +156,7 @@ export default function Home() {
           }),
         ]}
       />
-      <Flex flexDir={[ "column", "row" ]}>
+      <Flex flexDir={[ "column", "column", "row" ]}>
         <Box px={5}>
           <TableGenerator
             headers={[
